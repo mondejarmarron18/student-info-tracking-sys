@@ -15,17 +15,8 @@ func NewUserRoute() *UserRoute {
 	}
 }
 
-func (r *UserRoute) Register() http.Handler {
-	mux := http.NewServeMux()
-
-	mux.HandleFunc("POST /", r.userController.CreateUser)
-	mux.HandleFunc("GET /", r.userController.GetUsers)
-	mux.HandleFunc("GET /{id}", r.userController.GetUserById)
-	mux.HandleFunc("GET /test", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Del("Content-Type")
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("Hello World"))
-	})
-
-	return mux
+func (r *UserRoute) Register(mux *http.ServeMux) {
+	mux.HandleFunc("GET /users", r.userController.GetUsers)
+	mux.HandleFunc("GET /users/{id}", r.userController.GetUserById)
+	mux.HandleFunc("POST /users", r.userController.CreateUser)
 }

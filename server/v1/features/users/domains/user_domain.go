@@ -7,11 +7,11 @@ import (
 
 type User struct {
 	Id         string       `json:"id"`
-	RoleId     string       `json:"role_id"`
+	RoleId     string       `json:"roleId"`
 	Email      string       `json:"email"`
 	Password   string       `json:"password,omitempty"`
-	VerifiedAt sql.NullTime `json:"verified_at"`
-	DeletedAt  sql.NullTime `json:"deleted_at"`
-	CreatedAt  time.Time    `json:"created_at"`
-	UpdatedAt  time.Time    `json:"updated_at"`
+	VerifiedAt sql.NullTime `json:"verifiedAt"`
+	DeletedAt  sql.NullTime `json:"deletedAt"`
+	CreatedAt  time.Time    `json:"createdAt"`
+	UpdatedAt  time.Time    `json:"updatedAt"`
 }

@@ -3,6 +3,7 @@ package v1
 import (
 	"log"
 	"net/http"
+
 	"server/v1/middlewares"
 	"server/v1/utils"
 )
@@ -13,10 +14,8 @@ func Server() *http.Server {
 	//Establish database connection
 	utils.NewDB(config.DbUrl)
 
-	mux := http.NewServeMux()
-
 	//Register routes
-	mux.Handle("/", NewRoute().Register())
+	mux := NewRoutes().Register()
 
 	//Apply middlewares
 	routeWithMiddlewares := middlewares.Apply(mux, []middlewares.Middleware{

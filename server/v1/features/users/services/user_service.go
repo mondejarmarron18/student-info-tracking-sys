@@ -34,7 +34,7 @@ func (s *UserService) CreateUser(user domains.User) (domains.User, error) {
 }
 
 func (s *UserService) GetUsers(filter utils.Filter) ([]domains.User, error) {
-	users, err := s.userRepo.GetUers(filter)
+	users, err := s.userRepo.GetUsers(filter)
 
 	if err != nil {
 		return nil, err

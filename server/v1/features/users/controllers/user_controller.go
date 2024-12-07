@@ -21,7 +21,6 @@ func NewUserController() *UserController {
 
 // CreateUser handles the HTTP request for creating a new user
 func (c *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
-	log.Println("Creating a new user")
 	var user domains.User
 
 	body := r.Body
@@ -54,6 +53,7 @@ func (c *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 func (c *UserController) GetUsers(w http.ResponseWriter, r *http.Request) {
 
+	log.Println(r.URL.Query())
 	urlQuery := r.URL.Query()
 	filter := utils.GetQueryFilter(urlQuery)
 

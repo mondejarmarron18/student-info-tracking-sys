@@ -1,6 +1,6 @@
 package constants
 
-var UserTableColumns = []string{
+var PermissionTableColumns = []string{
 	"id",
 	"name",
 	"description",

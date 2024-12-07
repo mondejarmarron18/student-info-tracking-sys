@@ -6,8 +6,8 @@ import (
 	"log"
 	"server/v1/utils"
 
-	"server/v1/features/users/constants"
-	"server/v1/features/users/domains"
+	"server/v1/features/permissions/constants"
+	"server/v1/features/permissions/domains"
 )
 
 type PermissionRepo struct {
@@ -22,67 +22,67 @@ func NewPermissionRepo() *PermissionRepo {
 	}
 }
 
-func (r *PermissionRepo) CreatePermission(user *domains.User) (*domains.User, error) {
-	userExclude := domains.User{}
+func (r *PermissionRepo) CreatePermission(permission *domains.Permission) (*domains.Permission, error) {
+	permissionExclude := domains.Permission{}
 
-	row := r.dbConn.QueryRow("INSERT INTO permission () VALUES ($1, $2, $3, $4) RETURNING id, email, password, created_at, updated_at", user.Email, user.Password)
+	row := r.dbConn.QueryRow("INSERT INTO permission (name, description) VALUES ($1, $2) RETURNING id, name, description, created_at, updated_at", permission.Name, permission.Description)
 
-	err := row.Scan(&user.Id, &user.Email, &userExclude.Password, &user.CreatedAt, &user.UpdatedAt)
+	err := row.Scan(&permission.Id, &permission.Name, &permission.Description, &permission.CreatedAt, &permission.UpdatedAt, &permissionExclude.UpdatedAt)
 
 	if err != nil {
-		log.Println("Error creating user:", err)
+		log.Println("Error creating permission:", err)
 
 		return nil, err
 	}
 
-	log.Println("User created successfully")
-	return user, nil
+	log.Println("Permission created successfully")
+	return permission, nil
 }
 
-func (r *PermissionRepo) GetPermissions(filter utils.Filter) (*[]domains.User, error) {
-	users := &[]domains.User{}
+func (r *PermissionRepo) GetPermissions(filter utils.Filter) (*[]domains.Permission, error) {
+	permissions := &[]domains.Permission{}
 
-	if !utils.IsValueInList(filter.SortBy, constants.UserTableColumns) {
+	if !utils.IsValueInList(filter.SortBy, constants.PermissionTableColumns) {
 		return nil, errors.New(r.errorMessage.InvalidRequest)
 	}
 
-	query := "SELECT * FROM user_account WHERE email ILIKE '%' || $3 || '%' ORDER BY " + filter.SortBy + " " + filter.SortOrder + " LIMIT $1 OFFSET $2"
+	query := "SELECT * FROM permission WHERE deleted_at IS NULL AND (name ILIKE '%' || $3 || '%' OR description ILIKE '%' || $3 || '%') ORDER BY " + filter.SortBy + " " + filter.SortOrder + " LIMIT $1 OFFSET $2"
 
 	rows, errRows := r.dbConn.Query(query, filter.Limit, filter.Offset, filter.Q)
 
 	if errRows != nil {
-		log.Println("Error getting users:", errRows)
+		log.Println("Error getting permissions:", errRows)
 		return nil, errRows
 	}
 
 	for rows.Next() {
-		user := &domains.User{}
-		userExclude := domains.User{}
-		err := rows.Scan(&user.Id, &user.Email, &userExclude.Password, &user.VerifiedAt, &user.DeletedAt, &user.CreatedAt, &user.UpdatedAt)
+		permission := &domains.Permission{}
+
+		err := rows.Scan(&permission.Id, &permission.Name, &permission.Description, &permission.CreatedAt, &permission.UpdatedAt)
 
 		if err != nil {
-			log.Println("Error scanning user:", err)
+			log.Println("Error scanning permission:", err)
 			return nil, errors.New(r.errorMessage.InternalServerError)
 		}
 
-		*users = append(*users, *user)
+		*permissions = append(*permissions, *permission)
 	}
 
-	return users, nil
+	return permissions, nil
 }
 
-func (r *PermissionRepo) GetPermissionById(id string) (*domains.User, error) {
-	user := &domains.User{}
-	userExclude := domains.User{}
-	query := "SELECT * FROM user_account WHERE id = $1"
+func (r *PermissionRepo) GetPermissionById(id string) (*domains.Permission, error) {
+	permission := &domains.Permission{}
+
+	query := "SELECT * FROM user_account WHERE id = $1 AND deleted_at IS NULL"
 	row := r.dbConn.QueryRow(query, id)
 
-	err := row.Scan(&user.Id, &user.Email, &userExclude.Password, &user.VerifiedAt, &user.DeletedAt, &user.CreatedAt, &user.UpdatedAt)
+	err := row.Scan(&permission.Id, &permission.Name, &permission.Description, &permission.CreatedAt, &permission.UpdatedAt)
 
 	if err != nil {
-		log.Println("Error getting user:", err)
+		log.Println("Error getting permission:", err)
 		return nil, errors.New(r.errorMessage.NotFound)
 	}
 
-	return user, nil
+	return permission, nil
 }

@@ -22,6 +22,8 @@ func GetQueryFilter(val url.Values) Filter {
 
 	filter := GetFilterDefault()
 
+	filter.Q = val.Get("q")
+
 	if limitErr == nil && int32(limit) > 0 {
 		filter.Limit = int32(limit)
 	}

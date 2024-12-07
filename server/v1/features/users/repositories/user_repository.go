@@ -27,7 +27,7 @@ func (r *UserRepo) CreateUser(user *domains.User) (*domains.User, error) {
 
 	row := r.dbConn.QueryRow("INSERT INTO user_account (role_id, email, password) VALUES ($1, $2, $3) RETURNING id, role_id, email, verified_at, created_at", user.RoleId, user.Email, user.Password)
 
-	err := row.Scan(&user.Id, &user.Email, &user.VerifiedAt, &user.CreatedAt)
+	err := row.Scan(&user.Id, &user.RoleId, &user.Email, &user.VerifiedAt, &user.CreatedAt)
 
 	if err != nil {
 		log.Println("Error creating user:", err)
@@ -39,7 +39,7 @@ func (r *UserRepo) CreateUser(user *domains.User) (*domains.User, error) {
 	return user, nil
 }
 
-func (r *UserRepo) GetUers(filter utils.Filter) (*[]domains.User, error) {
+func (r *UserRepo) GetUsers(filter utils.Filter) (*[]domains.User, error) {
 	users := &[]domains.User{}
 
 	if !utils.IsValueInList(filter.SortBy, constants.UserTableColumns) {
@@ -47,6 +47,8 @@ func (r *UserRepo) GetUers(filter utils.Filter) (*[]domains.User, error) {
 	}
 
 	query := "SELECT * FROM user_account WHERE email ILIKE '%' || $3 || '%' ORDER BY " + filter.SortBy + " " + filter.SortOrder + " LIMIT $1 OFFSET $2"
+
+	log.Println(filter)
 
 	rows, errRows := r.dbConn.Query(query, filter.Limit, filter.Offset, filter.Q)
 
@@ -58,7 +60,7 @@ func (r *UserRepo) GetUers(filter utils.Filter) (*[]domains.User, error) {
 	for rows.Next() {
 		user := &domains.User{}
 		userExclude := domains.User{}
-		err := rows.Scan(&user.Id, &user.Email, &userExclude.Password, &user.VerifiedAt, &user.DeletedAt, &user.CreatedAt, &user.UpdatedAt)
+		err := rows.Scan(&user.Id, &user.RoleId, &user.Email, &userExclude.Password, &user.VerifiedAt, &user.DeletedAt, &user.CreatedAt, &user.UpdatedAt)
 
 		if err != nil {
 			log.Println("Error scanning user:", err)
@@ -77,7 +79,7 @@ func (r *UserRepo) GetUserById(id string) (*domains.User, error) {
 	query := "SELECT * FROM user_account WHERE id = $1"
 	row := r.dbConn.QueryRow(query, id)
 
-	err := row.Scan(&user.Id, &user.Email, &userExclude.Password, &user.VerifiedAt, &user.DeletedAt, &user.CreatedAt, &user.UpdatedAt)
+	err := row.Scan(&user.Id, &user.RoleId, &user.Email, &userExclude.Password, &user.VerifiedAt, &user.DeletedAt, &user.CreatedAt, &user.UpdatedAt)
 
 	if err != nil {
 		log.Println("Error getting user:", err)
@@ -93,7 +95,7 @@ func (r *UserRepo) GetUserByEmail(email string) (*domains.User, error) {
 	query := "SELECT * FROM user_account WHERE email = $1"
 	row := r.dbConn.QueryRow(query, email)
 
-	err := row.Scan(&user.Id, &user.Email, &userExclude.Password, &user.VerifiedAt, &user.DeletedAt, &user.CreatedAt, &user.UpdatedAt)
+	err := row.Scan(&user.Id, &user.RoleId, &user.Email, &userExclude.Password, &user.VerifiedAt, &user.DeletedAt, &user.CreatedAt, &user.UpdatedAt)
 
 	if err != nil {
 		log.Println("Error getting user:", err)
