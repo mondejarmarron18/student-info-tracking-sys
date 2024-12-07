@@ -1,0 +1,31 @@
+services:
+  api:
+    container_name: sits_api
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    env_file:
+      - ./server/.env
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./server:/app
+    depends_on:
+      - db
+    networks:
+      - sits
+  db:
+    container_name: sits_db
+    image: postgres:16.6-alpine3.20
+    env_file:
+      - ./server/.env
+    ports:
+      - "5432:5432"
+    volumes:
+      - sits:/var/lib/postgresql/data
+    networks:
+      - sits
+volumes:
+  sits:
+networks:
+  sits:

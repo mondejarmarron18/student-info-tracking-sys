@@ -1,0 +1,7 @@
+To initialize database
+
+Intruction:
+cat <sql_file> | docker exec -i <container_name> psql -U <username> -d <database_name>
+
+Command:
+cat db.sql | docker exec -i sits_db psql -U postgres -d sits

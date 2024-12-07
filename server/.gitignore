@@ -1,0 +1,8 @@
+
+# Server
+/tmp
+
+.env
+.env.*
+!.env.example
+
