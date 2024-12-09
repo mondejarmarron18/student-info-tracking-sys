@@ -32,20 +32,11 @@ func (r *UserRepo) CreateUser(user *domains.User) (*domains.User, error) {
 		return nil, err
 	}
 
-	log.Println("User created successfully")
 	return user, nil
 }
 
 func (r *UserRepo) GetUers(filter utils.Filter) (*[]domains.User, error) {
 	users := &[]domains.User{}
-
-	if filter.Limit == 0 {
-		filter.Limit = 10
-	}
-
-	if filter.Offset == 0 {
-		filter.Offset = 0
-	}
 
 	query := "SELECT * FROM user_account LIMIT $1 OFFSET $2"
 	rows, errRows := r.dbConn.Query(query, filter.Limit, filter.Offset)

@@ -1,6 +1,7 @@
 package services
 
 import (
+	"errors"
 	"server/v1/features/users/domains"
 	"server/v1/features/users/repositories"
 	"server/v1/utils"
@@ -9,7 +10,8 @@ import (
 )
 
 type UserService struct {
-	userRepo *repositories.UserRepo
+	userRepo     *repositories.UserRepo
+	errorMessage utils.ErrorMessage
 }
 
 func NewUserService() *UserService {
@@ -20,7 +22,7 @@ func NewUserService() *UserService {
 func (s *UserService) CreateUser(user domains.User) (domains.User, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return user, err
+		return user, errors.New(s.errorMessage.BadRequest)
 	}
 
 	user.Password = string(hashedPassword)

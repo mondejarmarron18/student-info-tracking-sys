@@ -24,11 +24,11 @@ func GetQueryFilter(val url.Values) Filter {
 
 	filter.Q = val.Get("q")
 
-	if limitErr == nil && int32(limit) > 0 {
+	if limitErr == nil {
 		filter.Limit = int32(limit)
 	}
 
-	if offsetErr == nil && int32(offset) > 0 {
+	if offsetErr == nil {
 		filter.Offset = int32(offset)
 	}
 

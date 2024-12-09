@@ -35,7 +35,6 @@ func (r *UserRepo) CreateUser(user *domains.User) (*domains.User, error) {
 		return nil, err
 	}
 
-	log.Println("User created successfully")
 	return user, nil
 }
 
@@ -47,8 +46,6 @@ func (r *UserRepo) GetUsers(filter utils.Filter) (*[]domains.User, error) {
 	}
 
 	query := "SELECT * FROM user_account WHERE email ILIKE '%' || $3 || '%' ORDER BY " + filter.SortBy + " " + filter.SortOrder + " LIMIT $1 OFFSET $2"
-
-	log.Println(filter)
 
 	rows, errRows := r.dbConn.Query(query, filter.Limit, filter.Offset, filter.Q)
 

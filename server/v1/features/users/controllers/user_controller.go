@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"server/v1/features/users/domains"
 	"server/v1/features/users/services"
@@ -52,8 +51,6 @@ func (c *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *UserController) GetUsers(w http.ResponseWriter, r *http.Request) {
-
-	log.Println(r.URL.Query())
 	urlQuery := r.URL.Query()
 	filter := utils.GetQueryFilter(urlQuery)
 

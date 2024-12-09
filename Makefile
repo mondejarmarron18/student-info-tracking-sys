@@ -15,3 +15,6 @@ dbSeed:
 	# cat <sql_file> | docker exec -i <container_name> psql -U <username> -d <database_name>
 	@echo "Seeding database..."
 	cat ./server/v1/sql/seed.sql | docker exec -i sits_db psql -U postgres -d sits
+
+test:
+	cd server && go test -cover ./...

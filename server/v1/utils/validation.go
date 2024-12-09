@@ -9,3 +9,8 @@ func IsValueInList(value string, validValues []string) bool {
 
 	return false
 }
+
+func IsValueInMap(value string, validValues map[string]string) bool {
+	_, exists := validValues[value]
+	return exists
+}
